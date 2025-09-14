@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PodcastApp</title>
   <link rel="stylesheet" href="styles.css" />
-  <script type="module" src="./createPodcast.js"></script>
-
 </head>
 <body>
   <!-- Top header -->
@@ -51,9 +49,198 @@
 
   <!-- Grid container -->
   <main class="container main-content">
-    
     <section id="podcastGrid" class="grid"></section>
   </main>
+
+  <!-- Module script: imports your data.js and renders cards -->
+  <script type="module">
+    import { podcasts, genres } from './data.js';
+
+    const podcastGrid = document.getElementById('podcastGrid');
+    const genreFilter = document.getElementById('genreFilter');
+    const sortFilter = document.getElementById('sortFilter');
+
+    // Build a map from genre id -> genre title (from your data.js)
+    const genreMap = new Map();
+    if (Array.isArray(genres)) {
+      genres.forEach(g => genreMap.set(g.id, g.title));
+    }
+
+    // populate genre dropdown (keeps "All Genres" as first option)
+    (function populateGenres() {
+      // ensure unique, and use titles from genres array in data.js
+      if (Array.isArray(genres)) {
+        genres.forEach(g => {
+          const opt = document.createElement('option');
+          opt.value = String(g.id);
+          opt.textContent = g.title;
+          genreFilter.appendChild(opt);
+        });
+      } else {
+        // fall back: gather tag names from podcasts (if genres not provided)
+        const seen = new Set();
+        podcasts.forEach(p => {
+          if (Array.isArray(p.tags)) p.tags.forEach(t => seen.add(t));
+        });
+        [...seen].forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = t;
+          genreFilter.appendChild(opt);
+        });
+      }
+    })();
+
+    // helpful: format updated timestamp into "Updated X days ago"
+    function timeAgo(isoString) {
+      if (!isoString) return '';
+      const d = new Date(isoString);
+      if (isNaN(d)) return `Updated ${isoString}`;
+      const diffMs = Date.now() - d.getTime();
+      const sec = Math.floor(diffMs / 1000);
+      const min = Math.floor(sec / 60);
+      const hr = Math.floor(min / 60);
+      const day = Math.floor(hr / 24);
+      if (day >= 365) {
+        const yrs = Math.floor(day / 365);
+        return `Updated ${yrs} year${yrs>1?'s':''} ago`;
+      }
+      if (day >= 30) {
+        const months = Math.floor(day / 30);
+        return `Updated ${months} month${months>1?'s':''} ago`;
+      }
+      if (day >= 7) {
+        const weeks = Math.floor(day / 7);
+        return `Updated ${weeks} week${weeks>1?'s':''} ago`;
+      }
+      if (day >= 1) return `Updated ${day} day${day>1?'s':''} ago`;
+      if (hr >= 1) return `Updated ${hr} hour${hr>1?'s':''} ago`;
+      if (min >= 1) return `Updated ${min} minute${min>1?'s':''} ago`;
+      return 'Updated just now';
+    }
+
+    // render cards from podcasts array
+    function renderCards(filter = 'all', sortBy = 'recent') {
+      podcastGrid.innerHTML = '';
+
+      // copy and filter
+      let list = Array.isArray(podcasts) ? [...podcasts] : [];
+
+      // If genres array exists, filter by numeric genre id. If user selected a value that can be parsed as number, use numeric
+      if (filter !== 'all') {
+        const numeric = Number(filter);
+        if (!Number.isNaN(numeric) && numeric !== 0 && Array.isArray(list)) {
+          list = list.filter(p => Array.isArray(p.genres) && p.genres.includes(numeric));
+        } else {
+          // fallback: filter by tag name if podcasts use tag strings
+          list = list.filter(p => Array.isArray(p.tags) && p.tags.includes(filter));
+        }
+      }
+
+      // Sorting
+      if (sortBy === 'title') {
+        list.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      } else {
+        // default: sort by updated (newest first). attempts to parse ISO strings; if missing, leave last.
+        list.sort((a, b) => {
+          const ta = a.updated ? new Date(a.updated).getTime() : 0;
+          const tb = b.updated ? new Date(b.updated).getTime() : 0;
+          return tb - ta;
+        });
+      }
+
+      // create card elements
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        // cover container
+        const cover = document.createElement('div');
+        cover.className = 'cover';
+
+        // image (lazy)
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        img.alt = (p.title ? `${p.title} cover` : 'Podcast cover');
+        if (p.image) img.src = p.image;
+        // on error: hide image and show placeholder text
+        img.onerror = () => {
+          img.style.display = 'none';
+          cover.classList.add('no-image');
+          cover.textContent = 'Podcast Cover';
+        };
+
+        cover.appendChild(img);
+
+        // Title
+        const title = document.createElement('h3');
+        title.className = 'card-title';
+        title.textContent = p.title || 'Untitled';
+
+        // meta (seasons)
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `
+          <svg class="icon-cal" viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+            <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+              d="M7 11v6M17 11v6M3 7h18M5 4v3M19 4v3" />
+          </svg>
+          <span class="seasons-text">${p.seasons ?? 0} season${(p.seasons ?? 0) !== 1 ? 's' : ''}</span>
+        `;
+
+        // tags (map genre ids to titles using genreMap, fallback to p.tags if any)
+        const tagsWrap = document.createElement('div');
+        tagsWrap.className = 'tags';
+        const genreIds = Array.isArray(p.genres) ? p.genres : [];
+        if (genreIds.length > 0) {
+          genreIds.slice(0, 4).forEach(gid => {
+            const t = document.createElement('span');
+            t.className = 'tag';
+            t.textContent = (genreMap.get(gid) || 'Genre');
+            tagsWrap.appendChild(t);
+          });
+        } else if (Array.isArray(p.tags)) {
+          p.tags.slice(0, 4).forEach(n => {
+            const t = document.createElement('span');
+            t.className = 'tag';
+            t.textContent = n;
+            tagsWrap.appendChild(t);
+          });
+        }
+
+        // updated text
+        const updated = document.createElement('p');
+        updated.className = 'updated';
+        updated.textContent = timeAgo(p.updated);
+
+        // append to card
+        card.appendChild(cover);
+        card.appendChild(title);
+        card.appendChild(meta);
+        card.appendChild(tagsWrap);
+        card.appendChild(updated);
+
+        podcastGrid.appendChild(card);
+      });
+
+      // If no results, show friendly message
+      if (podcastGrid.children.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'No podcasts found.';
+        podcastGrid.appendChild(empty);
+      }
+    }
+
+    // wire up filters
+    genreFilter.addEventListener('change', () => renderCards(genreFilter.value, sortFilter.value));
+    sortFilter.addEventListener('change', () => renderCards(genreFilter.value, sortFilter.value));
+
+    // initial render
+    renderCards();
+  </script>
+
+  <script src="modal.js" type="module"></script>
   <!-- Podcast Modal -->
 <div id="podcastModal" class="modal" aria-hidden="true">
   <div class="modal-backdrop"></div>
