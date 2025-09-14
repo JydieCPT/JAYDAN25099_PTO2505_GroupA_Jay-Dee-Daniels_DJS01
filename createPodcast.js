@@ -7,7 +7,6 @@ import { podcasts, genres } from './data.js';
 import { timeAgo } from './dataUtils.js';
 import { genreMap, populateGenres } from './genreServices.js';
 import { renderCards } from './createGrid.js';
-import { initModal } from './modal.js';
 
 const podcastGrid = document.getElementById('podcastGrid');
 const genreFilter = document.getElementById('genreFilter');
