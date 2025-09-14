@@ -1,69 +1,39 @@
 # DJS01: Vanilla JS Podcast App
 
-## Overview
+# Podcast Grid App
 
-You will design and build a responsive web application that allows users to **browse podcast shows** on a landing page and **view detailed information** in a modal. The application should display clear, concise previews of podcast shows and offer additional information through a modal pop-up, **all without navigating away from the page**. Your app should showcase clean code architecture and strong UI/UX design while following JavaScript best practices.
+## Description
+This project is a dynamic podcast web application that displays a grid of podcasts with filtering, sorting, and detailed modal views. Users can browse podcasts by genre, view seasonal details, and get information about each podcast without leaving the page. The app is fully modular, making it easy to maintain and extend.
 
 ---
 
-## Core Objectives
+## Technologies Used
+- **HTML5** – Markup for the grid and modal structure  
+- **CSS3** – Styling for cards, modal, and responsive layout  
+- **JavaScript (ES Modules)** – Modular functionality for rendering, filtering, and modal management  
+- **DOM APIs** – Dynamic creation and manipulation of HTML elements  
+- **SVG Icons** – Lightweight icons for metadata such as seasons
 
-### 1. Landing Page – Podcast Previews
+---
 
-- Display a list of podcast shows on the landing page.
-- Each podcast preview must include:
+## Features
+- Dynamic podcast grid rendering from a `podcasts` dataset  
+- Filtering by genre or tag  
+- Sorting by title or last updated  
+- Lazy-loaded images for better performance  
+- Detailed podcast modal with:
+  - Title and description
   - Cover image
-  - Show title
-  - Number of seasons
-  - Genre names
-  - Last updated date (in a human-readable format)
-
-### 2. Modal View – Show Details
-
-- When a user clicks on a podcast preview, open a modal.
-- The modal should include:
-  - Larger cover image
-  - Podcast title
-  - Description of the show
-  - Genre tags
-  - Last updated date (readable format)
-  - List of season titles
-  - Number of episodes in each season
-- Include a clear and accessible way to **close the modal**.
-
-### 3. Code Architecture & Best Practices
-
-- Use **object-oriented programming (OOP)** where appropriate.
-- Apply **functional programming principles** to ensure modularity and predictability.
-- Follow **SOLID design principles** for clean, maintainable code.
-- Abstract repeated logic into **reusable functions or classes**.
-- Add **JSDoc comments** for major functions and modules.
+  - Genres / tags
+  - Last updated timestamp
+  - Season details with number of episodes  
+- Accessible modal with keyboard support (Escape key closes)  
+- Modular, maintainable JavaScript structure (split into `createPodcast.js`, `createGrid.js`, `genreServices.js`, `dataUtils.js`, `modal.js`)  
 
 ---
 
-## Technical Requirements
+## Setup Instructions
+1. Clone or download the repository:
 
-- Use **HTML, CSS (or Tailwind), and JavaScript**.
-- No page reloads: Use JavaScript to handle modal behaviour and data rendering.
-- Ensure all UI states (modal open/close, hover effects, etc.) work smoothly.
-- Ensure all data is displayed in a **readable and accessible format**.
-
----
-
-## Design & UX Goals
-
-- Visually appealing UI with clear layout and hierarchy.
-- Use a consistent **colour scheme, typography, spacing, and sizing**.
-- Accessibility considerations (contrast, font readability, responsive buttons).
-- App should be fully **responsive** on desktop, tablet, and mobile.
-
-Make sure to dive into the wireframe reference images folder for guidance on how to build the UI structure. Note that the UI wireframes for both Desktop and Mobile are included.  
-
-![alt text](<wireframe reference images/desktop view/desktop_modal_view.png>)
-
----
-
-## Deliverables
-
-- A fully functional, responsive podcast preview web application.
-- Clean, well-commented source code (HTML, CSS, JS).
+```bash
+git clone <repository-url>
