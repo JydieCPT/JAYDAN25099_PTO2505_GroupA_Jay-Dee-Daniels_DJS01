@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PodcastApp</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Top header -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <!-- simple logo -->
+        <svg class="logo-svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden>
+          <path fill="currentColor"
+            d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3zm6.5 9a1 1 0 10-2 0 6.5 6.5 0 01-13 0 1 1 0 10-2 0 8.5 8.5 0 007.5 8.45V22h-3a1 1 0 100 2h8a1 1 0 100-2h-3v-0.55A8.5 8.5 0 0018.5 11z"/>
+        </svg>
+        <span class="brand-text">PodcastApp</span>
+      </div>
 
+      <div class="top-actions">
+        <button class="icon-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+            <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-4.35-4.35M10.5 18A7.5 7.5 0 1010.5 3a7.5 7.5 0 000 15z"/>
+          </svg>
+        </button>
+
+        <div class="avatar" aria-hidden></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filters row -->
+  <div class="container filters-row">
+    <div class="filters-left">
+      <span class="filter-label">Filter by:</span>
+      <select id="genreFilter" class="select-pill">
+        <option value="all">All Genres</option>
+      </select>
+
+      <select id="sortFilter" class="select-pill">
+        <option value="recent">Recently Updated</option>
+        <option value="title">Title (A–Z)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Grid container -->
+  <main class="container main-content">
+    
+    <section id="podcastGrid" class="grid"></section>
+  </main>
+  <!-- Podcast Modal -->
+<div id="podcastModal" class="modal" aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <button class="modal-close" aria-label="Close">&times;</button>
+
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Podcast Title</h2>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-left">
+        <div class="modal-cover">
+          <img id="modalImage" src="" alt="">
+        </div>
+      </div>
+
+      <div class="modal-right">
+        <h3>Description</h3>
+        <p id="modalDescription">
+          Podcast description here…
+        </p>
+
+        <h3>Genres</h3>
+        <div id="modalGenres" class="modal-genres"></div>
+
+        <p class="modal-updated">
+          <svg class="icon-cal" viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+            <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+              d="M7 11v6M17 11v6M3 7h18M5 4v3M19 4v3" />
+          </svg>
+          <span id="modalUpdated">Last updated:</span>
+        </p>
+      </div>
+    </div>
+
+    <h3 class="seasons-heading">Seasons</h3>
+    <div id="modalSeasons" class="modal-seasons"></div>
+  </div>
+</div>
+
+</body>
+</html>
